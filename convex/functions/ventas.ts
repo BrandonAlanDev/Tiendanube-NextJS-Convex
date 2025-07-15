@@ -3,6 +3,7 @@ import { Id } from "../_generated/dataModel";
 import { v } from "convex/values";
 import { query } from "../_generated/server";
 import { Doc } from "../_generated/dataModel";
+import { internalMutation } from "../_generated/server";
 
 export const listarVentas = query({
   args: {
@@ -30,7 +31,7 @@ export const listarVentas = query({
       if (!usuario || !producto) continue;
 
       resultado.push({
-        comprador: usuario.nombreUsuario,
+        comprador: usuario.email,
         producto: producto.producto,
         precioUnitario: producto.precio,
         cantidad: venta.cantidad,
@@ -143,14 +144,15 @@ export const crearVenta = mutation({
 
 export const crearUsuario = mutation({
   args: {
-    nombreUsuario: v.string(),
-    password: v.string(),
+    email: v.string(),
+    nombreUsuario: v.optional(v.string()),
+    password: v.optional(v.string()),
     fecha: v.string(),
   },
   handler: async (ctx, args) => {
     const existente = await ctx.db
       .query("usuarios")
-      .filter((q) => q.eq(q.field("nombreUsuario"), args.nombreUsuario))
+      .filter((q) => q.eq(q.field("email"), args.email))
       .unique();
 
     if (existente) {

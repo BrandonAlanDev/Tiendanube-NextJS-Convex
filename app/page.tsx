@@ -24,6 +24,7 @@ import {
 } from "chart.js";
 import { Card } from "@/components/ui/card";
 import type { ChartOptions, ChartData } from "chart.js";
+import { SignInButton, SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 
 export default function Home() {
   const [usuario,setUsuario] = useState("");
@@ -35,6 +36,7 @@ export default function Home() {
   const crearVenta = useMutation(api.functions.ventas.crearVenta);
   const ventas = useQuery(api.functions.ventas.listarVentas, { limit: 10 });
   const ventasMeses = useQuery(api.functions.ventas.ventasPorMes);
+  const { isSignedIn, user } = useUser();
 
   if (ventas === undefined) return <p className="text-white">Cargando ventas...</p>;
   if (ventasMeses === undefined) return <p className="text-white">Cargando ventas por mes...</p>;
@@ -42,7 +44,15 @@ export default function Home() {
   return (
     <>
       <header className="sticky top-0 z-10 bg-black p-4 border-b-2 border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center text-white">
-        Convex + Next.js
+      {isSignedIn ? (
+        <>
+          <p>Hola, {user?.firstName}</p>
+          <UserButton />
+          <SignOutButton />
+        </>
+      ) : (
+        <SignInButton />
+      )}
       </header>
       <main className="p-8 flex flex-col gap-16 justify-center items-center">
         <h1 className="text-4xl font-bold text-center">Tiandanube con Convex</h1>
@@ -83,8 +93,10 @@ export default function Home() {
           <button className="w-full sm:w-[250px] p-4 text-2xl select-none rounded-2xl bg-black border-2 border-white text-white hover:bg-gray-300 hover:text-black hover:border-black transition-all duration-150"
           onClick={async () => { let response = 
             await crearUsuario({
-              nombreUsuario: "usuario1",
-              password: "usuario1",
+              clerkId: "1",
+              email: "brandoncarabajal@gmail.com",
+              nombreUsuario: "BrandonAlanDev",
+              password: "qweQWE123",
               fecha: new Date().toISOString(),
             })
           window.alert(response);

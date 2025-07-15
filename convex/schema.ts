@@ -8,11 +8,11 @@ import { v } from "convex/values";
 export default defineSchema({
 
   usuarios: defineTable({
-    nombreUsuario: v.string(),
-    password: v.string(),
+    email: v.string(),
+    nombreUsuario: v.optional(v.string()),
+    password: v.optional(v.string()),
     fecha: v.string(),
   }),
-
   productos: defineTable({
     producto: v.string(),
     precio: v.number(),
